@@ -1,14 +1,18 @@
 import pandas as pd
+from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.decomposition import PCA as SklearnPCA
 
 
-class RFFeatureSelection:
+class RFFeatureSelection(BaseEstimator, TransformerMixin):
 
     def __init__(self, n_features=20):
         self.n_features = n_features
 
-    def fit_transform(self, X, y):
+    def fit(self, X, y):
+        return self
+
+    def transform(self, X, y):
         rf = RandomForestClassifier(n_estimators=500)
         rf.fit(X, y)
         feature_scores = pd.Series(rf.feature_importances_, index=X.columns).sort_values(ascending=False)
@@ -17,12 +21,15 @@ class RFFeatureSelection:
         return X
 
 
-class PCA:
+class PCA(BaseEstimator, TransformerMixin):
 
     def __init__(self, n_components=5):
         self.n_components = n_components
 
-    def fit_transform(self, X):
+    def fit(self, X):
+        return self
+
+    def transform(self, X):
         index = X.index
         pca = SklearnPCA(n_components=self.n_components)
         pca_result = pca.fit_transform(X)

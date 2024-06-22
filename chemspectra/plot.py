@@ -2,7 +2,7 @@ from bokeh.palettes import Category10_10
 from bokeh.plotting import figure
 
 
-def plot(data):
+def plot_spectra(data):
     wavelengths = data.columns.tolist()
     wavelengths = list(map(float, wavelengths))
     samples = data.index.tolist()
