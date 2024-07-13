@@ -20,7 +20,7 @@ def kfold_train_test_split(df, filters, balanced=False):
     y_other = X_other['Class']
 
     if balanced:
-        _, X_test_other_cl, _, y_test_other_cl = train_test_split(X_other, y_other, test_size=0.2)
+        _, X_test_other_cl, _, y_test_other_cl = sklearn_train_test_split(X_other, y_other, test_size=0.2)
     else:
         X_test_other_cl = X_other
         y_test_other_cl = y_other
@@ -51,9 +51,9 @@ def train_test_split(df, filters):
     X_other_cl.insert(loc=0, column='Class', value=0)
     y_other_cl = X_other_cl['Class']
 
-    X_train, X_test_target_cl, y_train, y_test_target_cl = train_test_split(X_target_cl, y_target_cl, test_size=0.2,
+    X_train, X_test_target_cl, y_train, y_test_target_cl = sklearn_train_test_split(X_target_cl, y_target_cl, test_size=0.2,
                                                                             random_state=41)
-    _, X_test_other_cl, _, y_test_other_cl = train_test_split(X_other_cl, y_other_cl, test_size=0.2,
+    _, X_test_other_cl, _, y_test_other_cl = sklearn_train_test_split(X_other_cl, y_other_cl, test_size=0.2,
                                                               random_state=41)
     X_test = pd.concat([X_test_target_cl, X_test_other_cl])
     y_test = pd.concat([y_test_target_cl, y_test_other_cl])

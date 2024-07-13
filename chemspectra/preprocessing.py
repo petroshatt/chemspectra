@@ -1,12 +1,12 @@
 import numpy as np
 from scipy.signal import savgol_filter
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler as SkMinMaxScaler
 import warnings
 warnings.filterwarnings("ignore")
 
 
-class Scaler(BaseEstimator, TransformerMixin):
+class MinMaxScaler(BaseEstimator, TransformerMixin):
 
     def __init__(self):
         pass
@@ -15,9 +15,23 @@ class Scaler(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
-        mmscaler = MinMaxScaler().set_output(transform="pandas")
+        mmscaler = SkMinMaxScaler().set_output(transform="pandas")
         output = mmscaler.fit_transform(X)
         return output
+
+
+class AreaScaler(BaseEstimator, TransformerMixin):
+
+    def __init__(self):
+        pass
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        areas = X.sum(axis=1)
+        normalized_df = X.div(areas, axis=0)
+        return normalized_df
 
 
 class Center(BaseEstimator, TransformerMixin):

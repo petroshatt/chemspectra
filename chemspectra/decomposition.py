@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.decomposition import PCA as SklearnPCA
+from sklearn.decomposition import PCA as SkPCA
 
 
 class RFFeatureSelection(BaseEstimator, TransformerMixin):
@@ -31,7 +31,7 @@ class PCA(BaseEstimator, TransformerMixin):
 
     def transform(self, X):
         index = X.index
-        pca = SklearnPCA(n_components=self.n_components)
+        pca = SkPCA(n_components=self.n_components)
         pca_result = pca.fit_transform(X)
         columns = [f"PC{i + 1}" for i in range(pca_result.shape[1])]
         X = pd.DataFrame(data=pca_result, columns=columns, index=index)
