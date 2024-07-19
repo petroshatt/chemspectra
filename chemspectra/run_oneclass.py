@@ -1,8 +1,12 @@
+import warnings
+warnings.filterwarnings('ignore')
+
 from oneclass import *
 from preprocessing import *
 from plot import *
 from tt_split import *
 from decomposition import *
+from baselines import *
 
 import pandas as pd
 from bokeh.layouts import column, gridplot
@@ -24,8 +28,8 @@ if __name__ == '__main__':
     df = df.drop(df.loc[:, '1802.15':'4000.12'].columns, axis=1)
     df.set_index('Sample', inplace=True)
 
-    filters = [(df['Botanical'] == 1)]
-    # filters = [(df['Geographical'] == 5)]
+    # filters = [(df['Botanical'] == 1)]
+    filters = [(df['Geographical'] == 5)]
     # filters = [(df['Botanical'] == 3), (df['Geographical'] == 2)]
 
     y = df.iloc[:, :2]
@@ -34,8 +38,8 @@ if __name__ == '__main__':
     p1 = plot_spectra(X)
 
     pipeline = Pipeline([
-        ('snv', Snv()),
-        ('savgol', Savgol(window_length=25, poly_order=5, deriv=0))
+        ('savgol', Savgol(window_length=25, poly_order=5, deriv=0)),
+        ('als', Als(lam=10000))
     ])
     X = pipeline.fit_transform(X)
 

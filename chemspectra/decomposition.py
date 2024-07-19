@@ -5,20 +5,19 @@ from sklearn.decomposition import PCA as SkPCA
 
 
 class RFFeatureSelection(BaseEstimator, TransformerMixin):
-
     def __init__(self, n_features=20):
         self.n_features = n_features
+        self.top_features = None
 
     def fit(self, X, y):
-        return self
-
-    def transform(self, X, y):
         rf = RandomForestClassifier(n_estimators=500)
         rf.fit(X, y)
         feature_scores = pd.Series(rf.feature_importances_, index=X.columns).sort_values(ascending=False)
-        top_features = feature_scores.head(self.n_features).index
-        X = X[top_features]
-        return X
+        self.top_features = feature_scores.head(self.n_features).index
+        return self
+
+    def transform(self, X):
+        return X[self.top_features]
 
 
 class PCA(BaseEstimator, TransformerMixin):

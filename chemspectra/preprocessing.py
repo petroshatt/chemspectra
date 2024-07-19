@@ -1,9 +1,9 @@
 import numpy as np
+import pandas as pd
 from scipy.signal import savgol_filter
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import MinMaxScaler as SkMinMaxScaler
-import warnings
-warnings.filterwarnings("ignore")
+from sklearn.preprocessing import StandardScaler as SkStandardScaler
 
 
 class MinMaxScaler(BaseEstimator, TransformerMixin):
@@ -11,13 +11,27 @@ class MinMaxScaler(BaseEstimator, TransformerMixin):
     def __init__(self):
         pass
 
-    def fit(self, X):
+    def fit(self, X, y=None):
         return self
 
     def transform(self, X):
         mmscaler = SkMinMaxScaler().set_output(transform="pandas")
         output = mmscaler.fit_transform(X)
         return output
+
+
+class StandardScaler(BaseEstimator, TransformerMixin):
+
+    def __init__(self):
+        pass
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        scaler = SkStandardScaler()
+        X.values[:] = scaler.fit_transform(X)
+        return X
 
 
 class AreaScaler(BaseEstimator, TransformerMixin):
@@ -34,12 +48,12 @@ class AreaScaler(BaseEstimator, TransformerMixin):
         return normalized_df
 
 
-class Center(BaseEstimator, TransformerMixin):
+class MeanCentering(BaseEstimator, TransformerMixin):
 
     def __init__(self):
         pass
 
-    def fit(self, X):
+    def fit(self, X, y=None):
         return self
 
     def transform(self, X):
@@ -47,12 +61,12 @@ class Center(BaseEstimator, TransformerMixin):
         return output
 
 
-class Snv(BaseEstimator, TransformerMixin):
+class SNV(BaseEstimator, TransformerMixin):
 
     def __init__(self):
         pass
 
-    def fit(self, X):
+    def fit(self, X, y=None):
         return self
 
     def transform(self, X):
@@ -62,12 +76,12 @@ class Snv(BaseEstimator, TransformerMixin):
         return output
 
 
-class Msc(BaseEstimator, TransformerMixin):
+class MSC(BaseEstimator, TransformerMixin):
 
     def __init__(self, reference=None):
         self.reference = reference
 
-    def fit(self, X):
+    def fit(self, X, y=None):
         return self
 
     def transform(self, X):
@@ -87,17 +101,18 @@ class Msc(BaseEstimator, TransformerMixin):
 
 class Savgol(BaseEstimator, TransformerMixin):
 
-    def __init__(self, window_length, poly_order, deriv):
+    def __init__(self, window_length, poly_order, deriv=0):
         self.window_length = window_length
         self.poly_order = poly_order
         self.deriv = deriv
 
-    def fit(self, X):
+    def fit(self, X, y=None):
         return self
 
     def transform(self, X):
-        output = X.apply(self.savgol)
+        output = X.apply(self.savgol, axis=1)
         return output
 
-    def savgol(self, col):
-        return savgol_filter(col, window_length=self.window_length, polyorder=self.poly_order, deriv=self.deriv)
+    def savgol(self, row):
+        filtered_row = savgol_filter(row, window_length=self.window_length, polyorder=self.poly_order, deriv=self.deriv)
+        return pd.Series(filtered_row, index=row.index)
