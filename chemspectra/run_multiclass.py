@@ -4,6 +4,7 @@ warnings.filterwarnings('ignore')
 import functools
 import numpy as np
 import pandas as pd
+from astartes import train_test_split as astartes_tt_split
 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix
@@ -18,24 +19,9 @@ from chemspectra.preprocessing import *
 from decomposition import *
 from plot import *
 from baselines import *
+from predict import *
+from utils import *
 
-
-def conjunction(conditions):
-    return functools.reduce(np.logical_and, conditions)
-
-
-def calculate_mean_spectra(df, filt):
-    mean_spectra = []
-    types = df[filt].unique()
-
-    for t in types:
-        type_df = df[df[filt] == t]
-        type_df = type_df.drop(filt, axis=1)
-        type_mean = type_df.mean(axis=0)
-        mean_spectra.append(type_mean)
-
-    means_df = pd.concat(mean_spectra, axis=1).T
-    return means_df
 
 
 if __name__ == '__main__':
@@ -52,19 +38,37 @@ if __name__ == '__main__':
     y = df[filters]
     X = df.iloc[:, 2:]
 
-    pipeline = Pipeline([
-        ('baseline', SecondOrderBaseline()),
-        ('savgol', Savgol(25, 5, 0)),
-        ('scaler', StandardScaler())
-    ])
-    X = pipeline.fit_transform(X)
+    # methods = {
+    #     'Baseline': [None, LinearBaseline(), SecondOrderBaseline()],
+    #     'Scattering': [None, SNV(), MSC()],
+    #     'Smoothing': [None, Savgol(25, 5, 0)],
+    #     'Scaling': [None, StandardScaler()],
+    #     'Classification': [KNeighborsClassifier(n_neighbors=7), RandomForestClassifier(), MLPClassifier(), SVC(gamma='auto')]
+    # }
 
-    # pca = PCA(n_components=5)
-    # X = pca.fit_transform(X)
-
-    clf = KNeighborsClassifier(n_neighbors=5)
+    methods = {
+        'Baseline': [None, LinearBaseline()],
+        'Scaling': [None, StandardScaler()],
+        'Classification': [KNeighborsClassifier(n_neighbors=7), RandomForestClassifier()]
+    }
 
     cv = KFold(n_splits=5, random_state=67, shuffle=True)
-    y_pred = cross_val_predict(clf, X, y.values.ravel(), cv=cv)
-    print(classification_report(y, y_pred))
-    print(confusion_matrix(y, y_pred))
+    results = predict(X, y, cv, methods)
+    print(results)
+
+    # pipeline = Pipeline([
+    #     ('baseline', LinearBaseline()),
+    #     ('savgol', Savgol(25, 5, 0)),
+    #     ('scaler', StandardScaler())
+    # ])
+    # X = pipeline.fit_transform(X)
+    #
+    # # pca = PCA(n_components=5)
+    # # X = pca.fit_transform(X)
+    #
+    # clf = SVC(kernel='linear', gamma='auto')
+    # cv = KFold(n_splits=5, random_state=67, shuffle=True)
+    # y_pred = cross_val_predict(clf, X, y.values.ravel(), cv=cv)
+    #
+    # print(classification_report(y, y_pred))
+    # print(confusion_matrix(y, y_pred))

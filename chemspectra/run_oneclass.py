@@ -39,7 +39,7 @@ if __name__ == '__main__':
 
     pipeline = Pipeline([
         ('savgol', Savgol(window_length=25, poly_order=5, deriv=0)),
-        ('als', Als(lam=10000))
+        ('als', ALS(lam=10000))
     ])
     X = pipeline.fit_transform(X)
 

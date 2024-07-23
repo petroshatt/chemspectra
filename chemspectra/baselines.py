@@ -5,7 +5,7 @@ import scipy.signal as signal
 from sklearn.base import BaseEstimator, TransformerMixin
 
 
-class Als(BaseEstimator, TransformerMixin):
+class ALS(BaseEstimator, TransformerMixin):
 
     def __init__(self, lam=100):
         self.lam = lam
