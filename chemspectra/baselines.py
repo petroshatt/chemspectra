@@ -26,7 +26,7 @@ class ALS(BaseEstimator, TransformerMixin):
 
 class Derivative(BaseEstimator, TransformerMixin):
 
-    def __init__(self, deriv=1, d=2):
+    def __init__(self, deriv, d=2):
         self.deriv = deriv
         self.d = d
 

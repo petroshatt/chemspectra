@@ -2,13 +2,17 @@ import pandas as pd
 import numpy as np
 import functools
 from sklearn.model_selection import KFold, train_test_split as sklearn_train_test_split
-
-
-def conjunction(conditions):
-    return functools.reduce(np.logical_and, conditions)
+from utils import *
 
 
 def kfold_train_test_split(df, filters, balanced=False):
+    """
+    KFold cross-validation for one-class problems, including the filter conjuction.
+    :param df: The dataframe to be split.
+    :param filters: The filters that need to be applied.
+    :param balanced: TO-BE REMOVED
+    :return: A list containing lists of dataframes, one for each fold.
+    """
     X_target_cl = df[conjunction(filters)]
     X_target_cl = X_target_cl.iloc[:, 2:]
     X_target_cl.insert(loc=0, column='Class', value=1)
@@ -41,6 +45,12 @@ def kfold_train_test_split(df, filters, balanced=False):
 
 
 def train_test_split(df, filters):
+    """
+    Normal train-test split, including filter conjuction.
+    :param df: The dataframe to be split.
+    :param filters: The filters that need to be applied.
+    :return: Four dataframes (X_train, X_test, y_train, y_test).
+    """
     X_target_cl = df[conjunction(filters)]
     X_target_cl = X_target_cl.iloc[:, 2:]
     X_target_cl.insert(loc=0, column='Class', value=1)

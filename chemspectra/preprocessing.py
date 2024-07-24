@@ -78,22 +78,21 @@ class SNV(BaseEstimator, TransformerMixin):
 
 class MSC(BaseEstimator, TransformerMixin):
 
-    def __init__(self, reference=None):
-        self.reference = reference
+    def __init__(self):
+        pass
 
     def fit(self, X, y=None):
         return self
 
     def transform(self, X):
-        if self.reference is None:
-            self.reference = np.mean(X, axis=0)
+        reference = np.mean(X, axis=0)
 
         for i in range(X.shape[0]):
             X.iloc[i, :] -= X.iloc[i, :].mean()
 
         output = X.copy()
         for i in range(X.shape[0]):
-            fit = np.polyfit(self.reference, X.iloc[i, :], 1, full=True)
+            fit = np.polyfit(reference, X.iloc[i, :], 1, full=True)
             output.iloc[i, :] = (X.iloc[i, :] - fit[0][1]) / fit[0][0]
 
         return output
