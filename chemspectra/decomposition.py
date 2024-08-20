@@ -22,7 +22,7 @@ class RFFeatureSelection(BaseEstimator, TransformerMixin):
 
 class PCA(BaseEstimator, TransformerMixin):
 
-    def __init__(self, n_components=5):
+    def __init__(self, n_components):
         self.n_components = n_components
 
     def fit(self, X):
@@ -35,4 +35,3 @@ class PCA(BaseEstimator, TransformerMixin):
         columns = [f"PC{i + 1}" for i in range(pca_result.shape[1])]
         X = pd.DataFrame(data=pca_result, columns=columns, index=index)
         return X
-

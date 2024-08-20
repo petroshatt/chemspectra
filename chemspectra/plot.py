@@ -14,8 +14,7 @@ def plot_spectra(data, show_legend=False):
     for i, sample in enumerate(samples):
         intensity_values = data.loc[sample].tolist()
         intensity_values = list(map(float, intensity_values))
-        line = p.line(x=wavelengths, y=intensity_values, line_width=2, color=colors[i % len(colors)]
-                      ,legend_label=str(sample) if show_legend else None)
+        line = p.line(x=wavelengths, y=intensity_values, line_width=2, color=colors[i % len(colors)])
 
     if show_legend:
         p.legend.title = 'Samples'
