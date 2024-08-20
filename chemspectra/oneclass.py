@@ -46,6 +46,12 @@ class DDSimca(BaseEstimator, TransformerMixin):
         self.metrics_list = None
 
     def fit(self, X, y=None):
+
+        try:
+            X = pd.DataFrame(X)
+        except:
+            pass
+
         self.training_set = X.iloc[:, 1:]
         self.target_class = X.iloc[0, 0]
 
@@ -167,6 +173,11 @@ class DDSimca(BaseEstimator, TransformerMixin):
         return np.expm1(input)
 
     def predict(self, Xtest):
+        try:
+            Xtest = pd.DataFrame(Xtest)
+        except:
+            pass
+
         self.test_set = Xtest.iloc[:, 1:]
         self.test_set_labels = Xtest.iloc[:, 0]
         sd_vector_pred = self.calculate_sd(self.test_set, self.loadings, self.eigenmatrix)
@@ -179,6 +190,8 @@ class DDSimca(BaseEstimator, TransformerMixin):
 
         self.sd_test = sd_vector_pred
         self.od_test = od_vector_pred
+
+        return np.where(np.array(self.external_objs_test), -1, 1)
 
     def pred_acceptance_plot(self):
         oD = [0 for _ in range(len(self.od_test))]
