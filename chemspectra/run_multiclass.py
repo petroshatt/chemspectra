@@ -5,6 +5,7 @@ import functools
 import numpy as np
 import pandas as pd
 from astartes import train_test_split as astartes_tt_split
+from bokeh.plotting import show
 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import KFold
@@ -25,16 +26,22 @@ from utils import *
 if __name__ == '__main__':
     metrics = pd.DataFrame(columns=['Accuracy', 'Precision', 'Sensitivity', 'Specificity', 'F1_score'])
 
-    # FTIR
+    # FTIR - ADULTERATED LABELS
+    # df = pd.read_csv("../data/honey_adulterated_ftir.csv")
+    # df = df.drop(df.loc[:, '499.96':'748.25'].columns, axis=1)
+    # df = df.drop(df.loc[:, '1802.15':'4000.12'].columns, axis=1)
+    # df.set_index('Sample', inplace=True)
+
+    # # FTIR
     # df = pd.read_csv("../data/honey_ftir.csv")
     # df = df.drop(df.loc[:, '499.96':'748.25'].columns, axis=1)
-    # df = df.drop(df.loc[:, '1311.36':'4000.12'].columns, axis=1)
+    # df = df.drop(df.loc[:, '1802.15':'4000.12'].columns, axis=1)
     # df.set_index('Sample', inplace=True)
 
     # UVVIS
     # df = pd.read_csv("../data/honey_uvvis.csv")
     # df = df.drop(df.loc[:, '190':'219.5'].columns, axis=1)
-    # df = df.drop(df.loc[:, '350':'900'].columns, axis=1)
+    # df = df.drop(df.loc[:, '500':'900'].columns, axis=1)
     # df.set_index('Sample', inplace=True)
 
     # Data Fusion (FTIR & UVVIS)
@@ -49,22 +56,23 @@ if __name__ == '__main__':
     uvvis.drop(['Geographical', 'Botanical'], axis=1, inplace=True)
     df = ftir.join(uvvis, how='inner')
 
-    filters = ['Botanical']
-    # filters = ['Geographical']
+    # filters = ['Syrup']
+    # filters = ['Botanical']
+    filters = ['Geographical']
 
     y = df[filters]
     X = df.iloc[:, 2:]
-    X = X.iloc[:, ::2]
 
     methods = {
-        'Baseline': [None, LinearBaseline(), SecondOrderBaseline(), Derivative(deriv=1), Derivative(deriv=2)],
+        'Baseline': [None, LinearBaseline(), PolyfitBaseline(degree=2), Derivative(deriv=1), Derivative(deriv=2)],
         'Scattering': [None, SNV(), MSC()],
         'Smoothing': [None, Savgol(25, 5, 0)],
         'Scaling': [None, StandardScaler(), MinMaxScaler()],
+        'DimRed': [None, PCA(n_components=5), PCA(n_components=11)],
         'Classification': [KNeighborsClassifier(n_neighbors=7), RandomForestClassifier(),
-                           MLPClassifier(), SVC(gamma='auto'), DecisionTreeClassifier()]
+                           MLPClassifier(), SVC(gamma='auto', kernel='linear')]
     }
 
     cv = KFold(n_splits=5, random_state=67, shuffle=True)
-    results = predict(X, y, cv, methods)
-    results.to_csv('../data/results/fusion_bot_results.csv')
+    results = predict_oneclass(X, y, cv, methods)
+    results.to_csv('../results/results_fusion_geographical.csv')

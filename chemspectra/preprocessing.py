@@ -1,10 +1,16 @@
 import numpy as np
 import pandas as pd
+from chemometrics import Emsc
 from scipy.signal import savgol_filter
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import MinMaxScaler as SkMinMaxScaler
 from sklearn.preprocessing import StandardScaler as SkStandardScaler
 
+
+import pandas as pd
+from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.preprocessing import MinMaxScaler as SkMinMaxScaler
+from sklearn.preprocessing import StandardScaler as SkStandardScaler
 
 class MinMaxScaler(BaseEstimator, TransformerMixin):
 
@@ -19,7 +25,6 @@ class MinMaxScaler(BaseEstimator, TransformerMixin):
         output = mmscaler.fit_transform(X)
         return output
 
-
 class StandardScaler(BaseEstimator, TransformerMixin):
 
     def __init__(self):
@@ -29,10 +34,11 @@ class StandardScaler(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
+        index = X.index
+        columns = X.columns
         scaler = SkStandardScaler()
-        X.values[:] = scaler.fit_transform(X)
-        return X
-
+        output = scaler.fit_transform(X)
+        return pd.DataFrame(output, index=index, columns=columns)
 
 class AreaScaler(BaseEstimator, TransformerMixin):
 
@@ -85,15 +91,36 @@ class MSC(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X):
-        reference = np.mean(X, axis=0)
+        X_copy = X.copy()
 
-        for i in range(X.shape[0]):
-            X.iloc[i, :] -= X.iloc[i, :].mean()
+        reference = np.mean(X_copy, axis=0)
 
-        output = X.copy()
-        for i in range(X.shape[0]):
-            fit = np.polyfit(reference, X.iloc[i, :], 1, full=True)
-            output.iloc[i, :] = (X.iloc[i, :] - fit[0][1]) / fit[0][0]
+        for i in range(X_copy.shape[0]):
+            X_copy.iloc[i, :] -= X_copy.iloc[i, :].mean()
+
+        output = X_copy.copy()
+        for i in range(X_copy.shape[0]):
+            fit = np.polyfit(reference, X_copy.iloc[i, :], 1, full=True)
+            output.iloc[i, :] = (X_copy.iloc[i, :] - fit[0][1]) / fit[0][0]
+
+        return output
+
+
+class EMSC(BaseEstimator, TransformerMixin):
+
+    def __init__(self, poly_order=2):
+        self.poly_order = poly_order
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        X_values = X.values
+
+        emsc = Emsc(self.poly_order)
+        transformed_values = emsc.fit_transform(X_values)
+
+        output = pd.DataFrame(transformed_values, index=X.index, columns=X.columns)
 
         return output
 

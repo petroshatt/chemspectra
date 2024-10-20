@@ -25,26 +25,29 @@ def predict(X, y, cv, methods):
              Sorted by Balanced Accuracy and Method column as index
     """
     permutations_dicts = generate_permutations(methods)
-    results = pd.DataFrame(columns=['Method', 'Balanced Accuracy', 'Accuracy', 'Sensitivity', 'Specificity', 'F1 Score'])
+    results = pd.DataFrame(columns=['Pre-Processing', 'Classifier', 'Balanced Accuracy', 'Accuracy', 'Precision',
+                                    'Sensitivity', 'F1 Score'])
 
     for perm in tqdm(permutations_dicts, desc='Processing permutations'):
         pipeline, clf, clf_name = build_pipeline(perm)
         X_transformed = pipeline.fit_transform(X)
         y_pred = cross_val_predict(clf, X_transformed, y.values.ravel(), cv=cv)
 
-        accuracy, recall, f1, balanced_acc = compute_metrics(y, y_pred)
-        methods_name = get_methods_name(perm, clf)
+        accuracy, precision, recall, f1, balanced_acc = compute_metrics(y, y_pred)
+        perm = get_methods_name(perm)
 
         results = pd.concat([results, pd.DataFrame({
-            'Method': [methods_name],
+            'Pre-Processing': [perm],
+            'Classifier': [clf],
             'Balanced Accuracy': [balanced_acc],
             'Accuracy': [accuracy],
-            'Recall': [recall],
+            'Precision': [precision],
+            'Sensitivity': [recall],
             'F1 Score': [f1]
         })], ignore_index=True)
 
     results = results.sort_values(by='Balanced Accuracy', ascending=False)
-    results.set_index('Method', inplace=True)
+    # results.set_index('Method', inplace=True)
 
     return results
 
@@ -60,7 +63,8 @@ def predict_oneclass(X, y, filters, methods):
              Sorted by Balanced Accuracy and Method column as index
     """
     permutations_dicts = generate_permutations(methods)
-    results = pd.DataFrame(columns=['Method', 'Balanced Accuracy', 'Accuracy', 'Sensitivity', 'Specificity', 'F1 Score'])
+    results = pd.DataFrame(columns=['Pre-Processing', 'Classifier', 'Balanced Accuracy', 'Accuracy', 'Sensitivity',
+                                    'Specificity', 'F1 Score'])
 
     for perm in tqdm(permutations_dicts, desc='Processing permutations'):
         pipeline, clf, clf_name = build_pipeline(perm)
@@ -96,10 +100,11 @@ def predict_oneclass(X, y, filters, methods):
         metrics_df = pd.DataFrame(metrics_list)
         mean_metrics = metrics_df.mean()
 
-        methods_name = get_methods_name(perm, clf)
+        perm = get_methods_name(perm)
 
         results = pd.concat([results, pd.DataFrame({
-            'Method': [methods_name],
+            'Pre-Processing': [perm],
+            'Classifier': [clf],
             'Balanced Accuracy': [mean_metrics['Balanced Accuracy']],
             'Accuracy': [mean_metrics['Accuracy']],
             'Precision': [mean_metrics['Precision']],
@@ -108,10 +113,8 @@ def predict_oneclass(X, y, filters, methods):
             'F1 Score': [mean_metrics['F1 Score']]
         })], ignore_index=True)
 
-    results = results.sort_values(by='Balanced Accuracy', ascending=False)
-    results = results.round(2)
-    results.set_index('Method', inplace=True)
+    # results = results.sort_values(by='Balanced Accuracy', ascending=False)
+    # results = results.round(3)
+    # results.set_index('Method', inplace=True)
 
     return results
-
-

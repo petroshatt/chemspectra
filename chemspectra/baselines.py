@@ -63,9 +63,9 @@ class LinearBaseline(BaseEstimator, TransformerMixin):
         return output
 
 
-class SecondOrderBaseline(BaseEstimator, TransformerMixin):
+class PolyfitBaseline(BaseEstimator, TransformerMixin):
 
-    def __init__(self, degree=2):
+    def __init__(self, degree):
         self.degree = degree
 
     def fit(self, X, y=None):
