@@ -4,13 +4,11 @@ warnings.filterwarnings('ignore')
 import functools
 import numpy as np
 import pandas as pd
-from astartes import train_test_split as astartes_tt_split
 from bokeh.plotting import show
 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import KFold
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
 

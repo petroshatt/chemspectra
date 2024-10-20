@@ -10,15 +10,8 @@ from decomposition import *
 from baselines import *
 
 import pandas as pd
-from bokeh.layouts import column, gridplot
-from bokeh.plotting import show
-from sklearn.pipeline import Pipeline
-from sklearn.model_selection import cross_val_predict
-import time
-from sklearn.ensemble import IsolationForest, RandomForestClassifier
+from sklearn.ensemble import IsolationForest
 from sklearn.svm import OneClassSVM
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
-from skimage import measure
 
 
 if __name__ == '__main__':
