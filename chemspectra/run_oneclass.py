@@ -19,25 +19,30 @@ if __name__ == '__main__':
     plots = []
     metrics = pd.DataFrame(columns=['Accuracy', 'Balanced Accuracy', 'Precision', 'Sensitivity', 'Specificity', 'F1_score'])
 
-    # FTIR
-    df = pd.read_csv("../data/honey_ftir.csv")
-    df = df.drop(df.loc[:, '499.96':'748.25'].columns, axis=1)
-    df = df.drop(df.loc[:, '1802.15':'4000.12'].columns, axis=1)
-    df.set_index('Sample', inplace=True)
-
     # FTIR - ADULTERATED LABELS
     # df = pd.read_csv("../data/honey_adulterated_ftir.csv")
     # df = df.drop(df.loc[:, '499.96':'748.25'].columns, axis=1)
     # df = df.drop(df.loc[:, '1802.15':'4000.12'].columns, axis=1)
     # df.set_index('Sample', inplace=True)
 
-    # filters = [(df['Botanical'] == 1)]
+    # FTIR
+    df = pd.read_csv("../data/honey_ftir.csv")
+    df = df.drop(df.loc[:, '499.96':'748.25'].columns, axis=1)
+    df = df.drop(df.loc[:, '1802.15':'4000.12'].columns, axis=1)
+    df.set_index('Sample', inplace=True)
+
+    filters = [(df['Botanical'] == 1)]
     # filters = [(df['Geographical'] == 5)]
-    filters = [(df['Botanical'] == 1), (df['Geographical'] == 2)]
+    # filters = [(df['Botanical'] == 1), (df['Geographical'] == 2)]
     # filters = [(df['Adulterated'] == 0)]
 
     y = df.iloc[:, 1]
+    # FOR GEOGRAPHICAL LABELS
+    # X =  df.iloc[:, 2]
+
     X = df.iloc[:, 3:]
+    # FOR ADULTERATION LABELS
+    # X =  df.iloc[:, 6:]
 
     df = pd.concat([y, X], axis=1)
 
@@ -55,4 +60,4 @@ if __name__ == '__main__':
     }
 
     results = predict_oneclass(X, y, filters, methods)
-    results.to_csv('../results/greekthyme_or_not.csv')
+    results.to_csv('../results/thyme_or_not.csv')

@@ -60,6 +60,8 @@ if __name__ == '__main__':
 
     y = df[filters]
     X = df.iloc[:, 2:]
+    # FOR ADULTERATION LABELS
+    # X = df.iloc[:, 5:]
 
     methods = {
         'Baseline': [None, LinearBaseline(), PolyfitBaseline(degree=2), Derivative(deriv=1), Derivative(deriv=2)],
