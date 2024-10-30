@@ -69,10 +69,13 @@ if __name__ == '__main__':
         'Smoothing': [None, Savgol(25, 5, 0)],
         'Scaling': [None, StandardScaler(), MinMaxScaler()],
         'DimRed': [None, PCA(n_components=5), PCA(n_components=11)],
-        'Classification': [KNeighborsClassifier(n_neighbors=7), RandomForestClassifier(),
-                           MLPClassifier(), SVC(gamma='auto', kernel='linear')]
+        'Classification': [KNeighborsClassifier(n_neighbors=7),
+                           # RandomForestClassifier(),
+                           # MLPClassifier(),
+                           # SVC(gamma='auto', kernel='linear')
+                           ]
     }
 
     cv = KFold(n_splits=5, random_state=67, shuffle=True)
-    results = predict_oneclass(X, y, cv, methods)
-    results.to_csv('../results/results_fusion_geographical.csv')
+    results = predict(X, y, cv, methods)
+    results.to_csv('../results/dummy1.csv')
