@@ -52,8 +52,7 @@ if __name__ == '__main__':
         'Smoothing': [None, Savgol(25, 5, 0)],
         'Scaling': [None, StandardScaler(), MinMaxScaler()],
         # 'DimReduction': [PCA(n_components=5)],
-        'Classification': [
-                           DDSimca(n_comps=5, alpha=0.10, gamma=0.1),
+        'Classification': [DDSimca(n_comps=5, alpha=0.10, gamma=0.1),
                            IsolationForest(n_estimators=500),
                            OneClassSVM(nu=0.4, gamma='auto')
                            ]
