@@ -70,9 +70,9 @@ if __name__ == '__main__':
         'Scaling': [None, StandardScaler(), MinMaxScaler()],
         'DimRed': [None, PCA(n_components=5), PCA(n_components=11)],
         'Classification': [KNeighborsClassifier(n_neighbors=7),
-                           # RandomForestClassifier(),
-                           # MLPClassifier(),
-                           # SVC(gamma='auto', kernel='linear')
+                           RandomForestClassifier(),
+                           MLPClassifier(),
+                           SVC(gamma='auto', kernel='linear')
                            ]
     }
 
